@@ -1,7 +1,7 @@
 import { TIMEFRAMES } from '../hooks/useCryptoRSI'
 
-const H   = 72
-const PAD = { top: 6, bottom: 14, left: 24, right: 4 }
+const H   = 140
+const PAD = { top: 8, bottom: 16, left: 26, right: 6 }
 const W   = 100
 
 const TF_COLORS = { '1m': '#6366f1', '5m': '#f59e0b', '15m': '#22c55e' }
@@ -193,7 +193,7 @@ export default function RSIChart({ coin }) {
         ))}
         <span className="rsi-chart__legend-item">
           <span className="rsi-chart__legend-dash">- -</span>
-          SMA(9)
+          SMA(14)
         </span>
         <span className="rsi-chart__legend-item rsi-chart__legend-cross-up">▲ cruce alcista</span>
         <span className="rsi-chart__legend-item rsi-chart__legend-cross-down">▼ cruce bajista</span>

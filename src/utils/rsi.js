@@ -1,5 +1,5 @@
 export const RSI_PERIOD = 14
-export const SMA_PERIOD = 9
+export const SMA_PERIOD = 14
 export const OVERBOUGHT  = 70
 export const OVERSOLD    = 30
 

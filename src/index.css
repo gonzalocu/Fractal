@@ -406,7 +406,7 @@ body { min-height: 100vh; background: var(--bg); }
 }
 .rsi-chart__svg {
   flex: 1;
-  height: 56px;
+  height: 120px;
   display: block;
   overflow: visible;
 }
