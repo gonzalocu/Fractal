@@ -105,6 +105,28 @@ body { min-height: 100vh; background: var(--bg); }
   vertical-align: middle;
 }
 
+/* ── Connection status ─────────────────────────────────────── */
+.conn-status {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+.conn-status--connecting {
+  color: var(--yellow);
+  background: #f59e0b15;
+  animation: blink 1.2s ease-in-out infinite;
+}
+.conn-status--connected { color: var(--green); background: #22c55e15; }
+.conn-status--error     { color: var(--red);   background: #ef444415; }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.footer-warn { color: var(--yellow); }
+
 /* ── Notification button ───────────────────────────────────── */
 .btn-notify {
   padding: 0.3rem 0.75rem;

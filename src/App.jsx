@@ -3,10 +3,17 @@ import { useCryptoRSI } from './hooks/useCryptoRSI'
 import CryptoCard from './components/CryptoCard'
 import AlertPanel from './components/AlertPanel'
 
+const CONN_LABELS = {
+  connecting: { text: '⟳ Conectando…', cls: 'conn-status--connecting' },
+  connected:  { text: '● En vivo',     cls: 'conn-status--connected'  },
+  error:      { text: '✕ Sin datos',   cls: 'conn-status--error'      },
+}
+
 export default function App() {
-  const { coins, alerts, clearAlerts, requestNotifications, notificationPermission } =
+  const { coins, alerts, clearAlerts, requestNotifications, notificationPermission, connStatus } =
     useCryptoRSI()
   const [tab, setTab] = useState('dashboard')
+  const conn = CONN_LABELS[connStatus] ?? CONN_LABELS.connecting
 
   return (
     <div className="app">
@@ -21,6 +28,8 @@ export default function App() {
           </div>
 
           <div className="app-header__right">
+            <span className={`conn-status ${conn.cls}`}>{conn.text}</span>
+
             {notificationPermission === 'default' && (
               <button className="btn-notify" onClick={requestNotifications}>
                 🔔 Activar notificaciones
@@ -77,7 +86,10 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        Datos en tiempo real vía Binance WebSocket · RSI 14 periodos · 1m / 5m / 15m
+        Datos en tiempo real vía Binance REST + WebSocket · RSI 14 periodos · 1m / 5m / 15m
+        {connStatus === 'error' && (
+          <span className="footer-warn"> — Reintentando conexión…</span>
+        )}
       </footer>
     </div>
   )
