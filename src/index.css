@@ -161,7 +161,6 @@ body { min-height: 100vh; background: var(--bg); }
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  margin-bottom: 1rem;
   font-size: 0.7rem;
 }
 .legend__item { display: flex; align-items: center; gap: 0.3rem; }
@@ -352,27 +351,40 @@ body { min-height: 100vh; background: var(--bg); }
   color: var(--text-muted);
 }
 
-/* ── Chart toggle button ───────────────────────────────────── */
-.crypto-card__header-right {
+/* ── Dashboard toolbar ─────────────────────────────────────── */
+.dashboard-toolbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
-.btn-chart-toggle {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
+
+.btn-charts-global {
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 500;
   cursor: pointer;
-  line-height: 1;
+  white-space: nowrap;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.btn-charts-global:hover { color: var(--accent); border-color: var(--accent); background: #6366f110; }
+.btn-charts-global--active { color: var(--accent); border-color: var(--accent); background: #6366f115; }
+
+/* ── Coin logo ─────────────────────────────────────────────── */
+.crypto-card__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #1f2d45;
   flex-shrink: 0;
 }
-.btn-chart-toggle:hover,
-.btn-chart-toggle--active { color: var(--accent); border-color: var(--accent); background: #6366f110; }
 
 /* ── Historical RSI chart ──────────────────────────────────── */
 .crypto-card__chart {
