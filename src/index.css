@@ -275,6 +275,16 @@ body { min-height: 100vh; background: var(--bg); }
   justify-content: space-between;
   align-items: baseline;
 }
+.rsi-gauge__vals {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.rsi-gauge__sma {
+  font-size: 0.62rem;
+  color: #e2e8f088;
+  font-variant-numeric: tabular-nums;
+}
 .rsi-gauge__tf {
   font-size: 0.65rem;
   color: var(--text-muted);
@@ -323,6 +333,17 @@ body { min-height: 100vh; background: var(--bg); }
   background: var(--bg);
   transition: left 0.4s ease, border-color 0.4s ease;
   z-index: 1;
+}
+.rsi-gauge__sma-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e2e8f066;
+  transform: translateX(-50%);
+  border-radius: 99px;
+  z-index: 2;
+  transition: left 0.4s ease;
 }
 
 .rsi-gauge__labels {
@@ -392,17 +413,23 @@ body { min-height: 100vh; background: var(--bg); }
 
 .rsi-chart__legend {
   display: flex;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
   justify-content: flex-end;
-  margin-top: 2px;
+  margin-top: 4px;
   font-size: 0.6rem;
   color: var(--text-muted);
 }
-.rsi-chart__legend-item { display: flex; align-items: center; gap: 3px; }
-.rsi-chart__legend-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.rsi-chart__legend-item       { display: flex; align-items: center; gap: 3px; }
+.rsi-chart__legend-dot        { width: 6px; height: 6px; border-radius: 50%; }
+.rsi-chart__legend-dash       { color: #e2e8f066; letter-spacing: -1px; }
+.rsi-chart__legend-cross-up   { color: #22c55e99; }
+.rsi-chart__legend-cross-down { color: #ef444499; }
+.rsi-chart__sma-val {
+  font-size: 0.6rem;
+  color: #e2e8f066;
+  display: block;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Alert panel ───────────────────────────────────────────── */
@@ -455,8 +482,11 @@ body { min-height: 100vh; background: var(--bg); }
 .alert-item:last-child { border-bottom: none; }
 .alert-item:hover { background: var(--bg-card-alt); }
 
-.alert-item--overbought { border-left: 3px solid var(--red); }
-.alert-item--oversold   { border-left: 3px solid var(--green); }
+.alert-item--overbought  { border-left: 3px solid var(--red);    }
+.alert-item--oversold    { border-left: 3px solid var(--green);  }
+.alert-item--cross-up    { border-left: 3px solid #22c55e; background: #22c55e08; }
+.alert-item--cross-down  { border-left: 3px solid #ef4444; background: #ef444408; }
+.alert-item__sma         { color: var(--text-muted); font-size: 0.78rem; }
 
 .alert-item__icon { font-size: 1rem; line-height: 1.4; }
 .alert-item__body { display: flex; flex-direction: column; gap: 2px; }

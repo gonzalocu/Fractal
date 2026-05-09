@@ -47,7 +47,7 @@ export default function CryptoCard({ coin }) {
 
       <div className="crypto-card__gauges">
         {TIMEFRAMES.map((tf) => (
-          <RSIGauge key={tf} tf={tf} rsi={coin.rsi[tf]} zone={coin.zone[tf]} />
+          <RSIGauge key={tf} tf={tf} rsi={coin.rsi[tf]} sma={coin.sma[tf]} zone={coin.zone[tf]} />
         ))}
       </div>
 
