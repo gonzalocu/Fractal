@@ -130,9 +130,9 @@ export default function RSIChart({ coin }) {
 
                     <CrossMarkers rsiData={rsiHistory} smaData={smaHistory} rsiLen={rsiHistory.length} />
 
-                    {/* Puntos finales */}
-                    {current    != null && <circle cx={innerW} cy={rsiToY(current)}    r={2.5} fill={color} />}
-                    {currentSma != null && <circle cx={innerW} cy={rsiToY(currentSma)} r={1.8} fill={SMA_COLOR} opacity="0.9" />}
+                    {/* Puntos finales — retranqueados 3px para no salirse del viewBox */}
+                    {current    != null && <circle cx={innerW - 3} cy={rsiToY(current)}    r={2.5} fill={color} />}
+                    {currentSma != null && <circle cx={innerW - 3} cy={rsiToY(currentSma)} r={1.8} fill={SMA_COLOR} opacity="0.9" />}
                   </>
                 ) : (
                   <text x={innerW / 2} y={innerH / 2} textAnchor="middle" fontSize={10} fill="#4b5563">Cargando…</text>

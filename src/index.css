@@ -391,6 +391,7 @@ body { min-height: 100vh; background: var(--bg); }
   margin-top: 0.75rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .rsi-chart { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -420,7 +421,7 @@ body { min-height: 100vh; background: var(--bg); }
   flex: 1;
   height: 160px;
   display: block;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .rsi-chart__legend {
