@@ -279,6 +279,7 @@ export function useCryptoRSI() {
   useEffect(() => {
     for (const coin of Object.values(state.coins)) {
       for (const tf of TIMEFRAMES) {
+        if (tf === '1m') { prevZones.current[`${coin.id}-${tf}`] = coin.zone[tf]; prevRsiSma.current[`${coin.id}-${tf}`] = { rsi: coin.rsi[tf], sma: coin.sma[tf] }; continue }
         const zone    = coin.zone[tf]
         const rsi     = coin.rsi[tf]
         const sma     = coin.sma[tf]
