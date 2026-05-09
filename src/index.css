@@ -105,6 +105,28 @@ body { min-height: 100vh; background: var(--bg); }
   vertical-align: middle;
 }
 
+/* ── Connection status ─────────────────────────────────────── */
+.conn-status {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+.conn-status--connecting {
+  color: var(--yellow);
+  background: #f59e0b15;
+  animation: blink 1.2s ease-in-out infinite;
+}
+.conn-status--connected { color: var(--green); background: #22c55e15; }
+.conn-status--error     { color: var(--red);   background: #ef444415; }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.footer-warn { color: var(--yellow); }
+
 /* ── Notification button ───────────────────────────────────── */
 .btn-notify {
   padding: 0.3rem 0.75rem;
@@ -139,7 +161,6 @@ body { min-height: 100vh; background: var(--bg); }
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  margin-bottom: 1rem;
   font-size: 0.7rem;
 }
 .legend__item { display: flex; align-items: center; gap: 0.3rem; }
@@ -253,6 +274,16 @@ body { min-height: 100vh; background: var(--bg); }
   justify-content: space-between;
   align-items: baseline;
 }
+.rsi-gauge__vals {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.rsi-gauge__sma {
+  font-size: 0.62rem;
+  color: #e2e8f088;
+  font-variant-numeric: tabular-nums;
+}
 .rsi-gauge__tf {
   font-size: 0.65rem;
   color: var(--text-muted);
@@ -302,11 +333,116 @@ body { min-height: 100vh; background: var(--bg); }
   transition: left 0.4s ease, border-color 0.4s ease;
   z-index: 1;
 }
+.rsi-gauge__sma-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e2e8f066;
+  transform: translateX(-50%);
+  border-radius: 99px;
+  z-index: 2;
+  transition: left 0.4s ease;
+}
 
 .rsi-gauge__labels {
   display: flex;
   justify-content: space-between;
   color: var(--text-muted);
+}
+
+/* ── Dashboard toolbar ─────────────────────────────────────── */
+.dashboard-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn-charts-global {
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.btn-charts-global:hover { color: var(--accent); border-color: var(--accent); background: #6366f110; }
+.btn-charts-global--active { color: var(--accent); border-color: var(--accent); background: #6366f115; }
+
+/* ── Coin logo ─────────────────────────────────────────────── */
+.crypto-card__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #1f2d45;
+  flex-shrink: 0;
+}
+
+/* ── Historical RSI chart ──────────────────────────────────── */
+.crypto-card__chart {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.rsi-chart { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.rsi-chart__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.rsi-chart__tf-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 36px;
+  flex-shrink: 0;
+}
+.rsi-chart__cur {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.rsi-chart__svg {
+  flex: 1;
+  height: 160px;
+  display: block;
+  overflow: hidden;
+}
+
+.rsi-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  justify-content: flex-end;
+  margin-top: 4px;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+.rsi-chart__legend-item       { display: flex; align-items: center; gap: 3px; }
+.rsi-chart__legend-dot        { width: 6px; height: 6px; border-radius: 50%; }
+.rsi-chart__legend-dash       { color: #e2e8f066; letter-spacing: -1px; }
+.rsi-chart__legend-cross-up   { color: #22c55e99; }
+.rsi-chart__legend-cross-down { color: #ef444499; }
+.rsi-chart__sma-val {
+  font-size: 0.6rem;
+  color: #e2e8f066;
+  display: block;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Alert panel ───────────────────────────────────────────── */
@@ -359,8 +495,11 @@ body { min-height: 100vh; background: var(--bg); }
 .alert-item:last-child { border-bottom: none; }
 .alert-item:hover { background: var(--bg-card-alt); }
 
-.alert-item--overbought { border-left: 3px solid var(--red); }
-.alert-item--oversold   { border-left: 3px solid var(--green); }
+.alert-item--overbought  { border-left: 3px solid var(--red);    }
+.alert-item--oversold    { border-left: 3px solid var(--green);  }
+.alert-item--cross-up    { border-left: 3px solid #22c55e; background: #22c55e08; }
+.alert-item--cross-down  { border-left: 3px solid #ef4444; background: #ef444408; }
+.alert-item__sma         { color: var(--text-muted); font-size: 0.78rem; }
 
 .alert-item__icon { font-size: 1rem; line-height: 1.4; }
 .alert-item__body { display: flex; flex-direction: column; gap: 2px; }

@@ -1,63 +1,119 @@
-const RSI_PERIOD = 14
+export const RSI_PERIOD = 14
+export const SMA_PERIOD = 14
+export const OVERBOUGHT  = 70
+export const OVERSOLD    = 30
 
-/**
- * Calcula RSI usando el método de Wilder (EMA suavizada).
- * Requiere al menos RSI_PERIOD + 1 cierres.
- * Retorna null si no hay suficientes datos.
- */
+// ── RSI ──────────────────────────────────────────────────────
+
 export function calculateRSI(closes) {
   if (closes.length < RSI_PERIOD + 1) return null
 
-  const changes = []
-  for (let i = 1; i < closes.length; i++) {
-    changes.push(closes[i] - closes[i - 1])
-  }
-
-  // Primer promedio simple
-  let avgGain = 0
-  let avgLoss = 0
-  for (let i = 0; i < RSI_PERIOD; i++) {
-    if (changes[i] > 0) avgGain += changes[i]
-    else avgLoss += Math.abs(changes[i])
+  let avgGain = 0, avgLoss = 0
+  for (let i = 1; i <= RSI_PERIOD; i++) {
+    const d = closes[i] - closes[i - 1]
+    if (d > 0) avgGain += d; else avgLoss += Math.abs(d)
   }
   avgGain /= RSI_PERIOD
   avgLoss /= RSI_PERIOD
 
-  // Suavizado de Wilder para el resto
-  for (let i = RSI_PERIOD; i < changes.length; i++) {
-    const gain = changes[i] > 0 ? changes[i] : 0
-    const loss = changes[i] < 0 ? Math.abs(changes[i]) : 0
-    avgGain = (avgGain * (RSI_PERIOD - 1) + gain) / RSI_PERIOD
-    avgLoss = (avgLoss * (RSI_PERIOD - 1) + loss) / RSI_PERIOD
+  for (let i = RSI_PERIOD + 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1]
+    avgGain = (avgGain * (RSI_PERIOD - 1) + (d > 0 ? d : 0)) / RSI_PERIOD
+    avgLoss = (avgLoss * (RSI_PERIOD - 1) + (d < 0 ? Math.abs(d) : 0)) / RSI_PERIOD
   }
 
-  if (avgLoss === 0) return 100
-  const rs = avgGain / avgLoss
-  return 100 - 100 / (1 + rs)
+  return avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss)
 }
 
-export const OVERBOUGHT = 70
-export const OVERSOLD = 30
+/**
+ * Calcula RSI en cada vela. Retorna array alineado con closes
+ * (los primeros RSI_PERIOD elementos son null).
+ */
+export function calculateRSIHistory(closes) {
+  if (closes.length < RSI_PERIOD + 1) return closes.map(() => null)
+
+  const result = new Array(RSI_PERIOD).fill(null)
+  let avgGain = 0, avgLoss = 0
+
+  for (let i = 1; i <= RSI_PERIOD; i++) {
+    const d = closes[i] - closes[i - 1]
+    if (d > 0) avgGain += d; else avgLoss += Math.abs(d)
+  }
+  avgGain /= RSI_PERIOD
+  avgLoss /= RSI_PERIOD
+
+  const toRSI = (ag, al) => (al === 0 ? 100 : 100 - 100 / (1 + ag / al))
+  result.push(toRSI(avgGain, avgLoss))
+
+  for (let i = RSI_PERIOD + 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1]
+    avgGain = (avgGain * (RSI_PERIOD - 1) + (d > 0 ? d : 0)) / RSI_PERIOD
+    avgLoss = (avgLoss * (RSI_PERIOD - 1) + (d < 0 ? Math.abs(d) : 0)) / RSI_PERIOD
+    result.push(toRSI(avgGain, avgLoss))
+  }
+
+  return result
+}
+
+// ── SMA sobre RSI ─────────────────────────────────────────────
+
+/**
+ * Calcula la SMA de `period` periodos sobre un array de valores.
+ * Los primeros (period-1) elementos son null.
+ */
+export function calculateSMAHistory(values, period = SMA_PERIOD) {
+  return values.map((_, i) => {
+    if (i < period - 1) return null
+    const slice = values.slice(i - period + 1, i + 1)
+    if (slice.some((v) => v === null)) return null
+    return slice.reduce((a, b) => a + b, 0) / period
+  })
+}
+
+export function calculateSMA(values, period = SMA_PERIOD) {
+  const hist = calculateSMAHistory(values, period)
+  return hist.at(-1) ?? null
+}
+
+// ── Zona ──────────────────────────────────────────────────────
 
 export function getRSIZone(rsi) {
   if (rsi === null) return 'loading'
   if (rsi >= OVERBOUGHT) return 'overbought'
-  if (rsi <= OVERSOLD) return 'oversold'
+  if (rsi <= OVERSOLD)   return 'oversold'
   return 'neutral'
 }
 
-/**
- * Detecta fractalidad: al menos 2 de las 3 temporalidades en la misma zona extrema.
- * Retorna 'overbought' | 'oversold' | null
- */
+// ── Fractalidad ───────────────────────────────────────────────
+
 export function detectFractality(rsiMap) {
-  const timeframes = ['1m', '5m', '15m']
-  const zones = timeframes.map((tf) => getRSIZone(rsiMap[tf]))
+  const zones = ['1m', '5m', '15m'].map((tf) => getRSIZone(rsiMap[tf]))
+  const ob = zones.filter((z) => z === 'overbought').length
+  const os = zones.filter((z) => z === 'oversold').length
+  if (ob >= 2) return 'overbought'
+  if (os >= 2) return 'oversold'
+  return null
+}
 
-  const overboughtCount = zones.filter((z) => z === 'overbought').length
-  const oversoldCount = zones.filter((z) => z === 'oversold').length
+// ── Detección de cruce RSI / SMA ──────────────────────────────
 
-  if (overboughtCount >= 2) return 'overbought'
-  if (oversoldCount >= 2) return 'oversold'
+/**
+ * Detecta cruce de RSI sobre SMA en zona extrema.
+ * prev/curr: { rsi, sma }
+ * Retorna 'cross_up_oversold' | 'cross_down_overbought' | null
+ */
+export function detectSMACrossover(prev, curr) {
+  if (!prev || !curr) return null
+  if (prev.rsi === null || prev.sma === null) return null
+  if (curr.rsi === null || curr.sma === null) return null
+
+  const crossedUp   = prev.rsi <= prev.sma && curr.rsi > curr.sma
+  const crossedDown = prev.rsi >= prev.sma && curr.rsi < curr.sma
+
+  // Cruce alcista en sobreventa: RSI sube por encima de la SMA mientras RSI < 35
+  if (crossedUp   && curr.rsi <= OVERSOLD + 5)   return 'cross_up_oversold'
+  // Cruce bajista en sobrecompra: RSI cae por debajo de la SMA mientras RSI > 65
+  if (crossedDown && curr.rsi >= OVERBOUGHT - 5) return 'cross_down_overbought'
+
   return null
 }
