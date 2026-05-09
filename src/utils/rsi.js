@@ -36,6 +36,42 @@ export function calculateRSI(closes) {
   return 100 - 100 / (1 + rs)
 }
 
+/**
+ * Calcula el RSI en cada punto del array de cierres.
+ * Retorna un array del mismo largo que closes (los primeros RSI_PERIOD valores son null).
+ */
+export function calculateRSIHistory(closes) {
+  if (closes.length < RSI_PERIOD + 1) return closes.map(() => null)
+
+  const result = new Array(RSI_PERIOD).fill(null)
+
+  // Warmup: primer promedio simple sobre los primeros RSI_PERIOD cambios
+  let avgGain = 0
+  let avgLoss = 0
+  for (let i = 1; i <= RSI_PERIOD; i++) {
+    const diff = closes[i] - closes[i - 1]
+    if (diff > 0) avgGain += diff
+    else avgLoss += Math.abs(diff)
+  }
+  avgGain /= RSI_PERIOD
+  avgLoss /= RSI_PERIOD
+
+  const toRSI = (ag, al) => (al === 0 ? 100 : 100 - 100 / (1 + ag / al))
+  result.push(toRSI(avgGain, avgLoss))
+
+  // Suavizado de Wilder
+  for (let i = RSI_PERIOD + 1; i < closes.length; i++) {
+    const diff = closes[i] - closes[i - 1]
+    const gain = diff > 0 ? diff : 0
+    const loss = diff < 0 ? Math.abs(diff) : 0
+    avgGain = (avgGain * (RSI_PERIOD - 1) + gain) / RSI_PERIOD
+    avgLoss = (avgLoss * (RSI_PERIOD - 1) + loss) / RSI_PERIOD
+    result.push(toRSI(avgGain, avgLoss))
+  }
+
+  return result
+}
+
 export const OVERBOUGHT = 70
 export const OVERSOLD = 30
 

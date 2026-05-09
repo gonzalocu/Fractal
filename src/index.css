@@ -331,6 +331,80 @@ body { min-height: 100vh; background: var(--bg); }
   color: var(--text-muted);
 }
 
+/* ── Chart toggle button ───────────────────────────────────── */
+.crypto-card__header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-chart-toggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.btn-chart-toggle:hover,
+.btn-chart-toggle--active { color: var(--accent); border-color: var(--accent); background: #6366f110; }
+
+/* ── Historical RSI chart ──────────────────────────────────── */
+.crypto-card__chart {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.rsi-chart { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.rsi-chart__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.rsi-chart__tf-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 36px;
+  flex-shrink: 0;
+}
+.rsi-chart__cur {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.rsi-chart__svg {
+  flex: 1;
+  height: 56px;
+  display: block;
+  overflow: visible;
+}
+
+.rsi-chart__legend {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 2px;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+.rsi-chart__legend-item { display: flex; align-items: center; gap: 3px; }
+.rsi-chart__legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
 /* ── Alert panel ───────────────────────────────────────────── */
 .alert-panel {
   background: var(--bg-card);

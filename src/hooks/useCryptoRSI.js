@@ -1,5 +1,5 @@
 import { useEffect, useRef, useReducer, useCallback, useState } from 'react'
-import { calculateRSI, getRSIZone, detectFractality } from '../utils/rsi'
+import { calculateRSI, calculateRSIHistory, getRSIZone, detectFractality } from '../utils/rsi'
 
 export const SYMBOLS = [
   { id: 'BTC',  stream: 'btcusdt',  label: 'Bitcoin',        color: '#f7931a' },
@@ -25,8 +25,8 @@ export const SYMBOLS = [
 ]
 export const TIMEFRAMES = ['1m', '5m', '15m']
 
-const MAX_CANDLES = 100
-// Puerto 443 (WSS estándar) — más compatible con firewalls que 9443
+const MAX_CANDLES = 200
+const MAX_RSI_HISTORY = 100
 const WS_BASE = 'wss://stream.binance.com/stream'
 const REST_BASE = 'https://api.binance.com/api/v3'
 
@@ -46,9 +46,10 @@ function buildInitialState() {
       color: sym.color,
       stream: sym.stream,
       price: null,
-      closes: { '1m': [], '5m': [], '15m': [] },
-      rsi:    { '1m': null, '5m': null, '15m': null },
-      zone:   { '1m': 'loading', '5m': 'loading', '15m': 'loading' },
+      closes:     { '1m': [], '5m': [], '15m': [] },
+      rsi:        { '1m': null, '5m': null, '15m': null },
+      rsiHistory: { '1m': [],   '5m': [],   '15m': []   },
+      zone:       { '1m': 'loading', '5m': 'loading', '15m': 'loading' },
       fractality: null,
     }
   }
@@ -59,20 +60,27 @@ function applyKlineUpdate(coin, tf, close, isFinal) {
   const prev = coin.closes[tf]
   const newCloses = isFinal
     ? [...prev, close].slice(-MAX_CANDLES)
-    : prev.length === 0
-    ? [close]
-    : [...prev.slice(0, -1), close]
+    : prev.length === 0 ? [close] : [...prev.slice(0, -1), close]
 
   const rsiValue = calculateRSI(newCloses)
   const zone = getRSIZone(rsiValue)
   const newRsi = { ...coin.rsi, [tf]: rsiValue }
 
+  // Actualiza historial: el último punto siempre es el RSI actual (vela viva)
+  const prevHist = coin.rsiHistory[tf]
+  const newHist = isFinal
+    ? [...prevHist, rsiValue].slice(-MAX_RSI_HISTORY)
+    : prevHist.length === 0
+    ? [rsiValue]
+    : [...prevHist.slice(0, -1), rsiValue]
+
   return {
     ...coin,
     price: close,
-    closes: { ...coin.closes, [tf]: newCloses },
-    rsi: newRsi,
-    zone: { ...coin.zone, [tf]: zone },
+    closes:     { ...coin.closes,     [tf]: newCloses },
+    rsi:        newRsi,
+    rsiHistory: { ...coin.rsiHistory, [tf]: newHist },
+    zone:       { ...coin.zone,       [tf]: zone },
     fractality: detectFractality(newRsi),
   }
 }
@@ -89,21 +97,31 @@ function reducer(state, action) {
       }
     }
     case 'LOAD_HISTORY': {
-      // action.data = { coinId, tf, closes: number[] }
       const { coinId, tf, closes } = action
       const coin = state.coins[coinId]
       if (!coin) return state
-      const rsiValue = calculateRSI(closes)
+
+      const fullHistory = calculateRSIHistory(closes)
+      // Solo los valores no-null para la gráfica
+      const rsiHistory = fullHistory.filter((v) => v !== null).slice(-MAX_RSI_HISTORY)
+      const rsiValue = rsiHistory.at(-1) ?? null
       const zone = getRSIZone(rsiValue)
       const newRsi = { ...coin.rsi, [tf]: rsiValue }
-      const updatedCoin = {
-        ...coin,
-        closes: { ...coin.closes, [tf]: closes },
-        rsi: newRsi,
-        zone: { ...coin.zone, [tf]: zone },
-        fractality: detectFractality(newRsi),
+
+      return {
+        ...state,
+        coins: {
+          ...state.coins,
+          [coinId]: {
+            ...coin,
+            closes:     { ...coin.closes,     [tf]: closes },
+            rsi:        newRsi,
+            rsiHistory: { ...coin.rsiHistory, [tf]: rsiHistory },
+            zone:       { ...coin.zone,       [tf]: zone },
+            fractality: detectFractality(newRsi),
+          },
+        },
       }
-      return { ...state, coins: { ...state.coins, [coinId]: updatedCoin } }
     }
     case 'ADD_ALERT': {
       const alert = { ...action.alert, id: Date.now() + Math.random() }
@@ -120,19 +138,17 @@ function findCoinByStream(streamName) {
   return SYMBOLS.find((s) => s.stream === streamName)
 }
 
-// Obtiene cierres históricos desde la REST API de Binance
 async function fetchKlines(symbol, interval, limit = MAX_CANDLES) {
   const url = `${REST_BASE}/klines?symbol=${symbol.toUpperCase()}&interval=${interval}&limit=${limit}`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const data = await res.json()
-  // data[i][4] = precio de cierre
   return data.map((k) => parseFloat(k[4]))
 }
 
 export function useCryptoRSI() {
   const [state, dispatch] = useReducer(reducer, null, buildInitialState)
-  const [connStatus, setConnStatus] = useState('connecting') // connecting | connected | error
+  const [connStatus, setConnStatus] = useState('connecting')
   const wsRef = useRef(null)
   const reconnectTimer = useRef(null)
   const alertCooldowns = useRef({})
@@ -227,9 +243,8 @@ export function useCryptoRSI() {
       }
     }
 
-    ws.onclose = (ev) => {
+    ws.onclose = () => {
       setConnStatus('error')
-      // Reconectar con backoff: 3 s
       reconnectTimer.current = setTimeout(connect, 3000)
     }
 
