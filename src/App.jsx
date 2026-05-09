@@ -1,0 +1,84 @@
+import { useState } from 'react'
+import { useCryptoRSI } from './hooks/useCryptoRSI'
+import CryptoCard from './components/CryptoCard'
+import AlertPanel from './components/AlertPanel'
+
+export default function App() {
+  const { coins, alerts, clearAlerts, requestNotifications, notificationPermission } =
+    useCryptoRSI()
+  const [tab, setTab] = useState('dashboard')
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <div className="app-header__inner">
+          <div className="app-header__brand">
+            <span className="app-header__logo">◈</span>
+            <div>
+              <h1 className="app-header__title">Crypto RSI Alerts</h1>
+              <p className="app-header__sub">Bitcoin · Ethereum · Solana · Ripple</p>
+            </div>
+          </div>
+
+          <div className="app-header__right">
+            {notificationPermission === 'default' && (
+              <button className="btn-notify" onClick={requestNotifications}>
+                🔔 Activar notificaciones
+              </button>
+            )}
+            {notificationPermission === 'granted' && (
+              <span className="notify-status notify-status--on">🔔 Activo</span>
+            )}
+            {notificationPermission === 'denied' && (
+              <span className="notify-status notify-status--off">🔕 Bloqueado</span>
+            )}
+          </div>
+        </div>
+
+        <nav className="app-nav">
+          <button
+            className={`app-nav__tab ${tab === 'dashboard' ? 'app-nav__tab--active' : ''}`}
+            onClick={() => setTab('dashboard')}
+          >
+            Dashboard
+          </button>
+          <button
+            className={`app-nav__tab ${tab === 'alerts' ? 'app-nav__tab--active' : ''}`}
+            onClick={() => setTab('alerts')}
+          >
+            Alertas
+            {alerts.length > 0 && (
+              <span className="app-nav__badge">{alerts.length}</span>
+            )}
+          </button>
+        </nav>
+      </header>
+
+      <main className="app-main">
+        {tab === 'dashboard' && (
+          <>
+            <div className="legend">
+              <span className="legend__item legend__item--oversold">RSI &lt; 30 Sobreventa</span>
+              <span className="legend__item legend__item--neutral">30–70 Neutral</span>
+              <span className="legend__item legend__item--overbought">RSI &gt; 70 Sobrecompra</span>
+              <span className="legend__item legend__item--fractal">⚡ Fractalidad: 2+ TF alineados</span>
+            </div>
+            <div className="card-grid">
+              {coins.map((coin) => (
+                <CryptoCard key={coin.id} coin={coin} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {tab === 'alerts' && (
+          <AlertPanel alerts={alerts} onClear={clearAlerts} />
+        )}
+      </main>
+
+      <footer className="app-footer">
+        Datos en tiempo real vía Binance WebSocket · RSI 14 periodos · 1m / 5m / 15m
+      </footer>
+    </div>
+  )
+}
