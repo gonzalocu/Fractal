@@ -5,30 +5,27 @@ import {
   getRSIZone, detectFractality, detectSMACrossover,
 } from '../utils/rsi'
 
-const IC = 'https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color'
-const CG = 'https://assets.coingecko.com/coins/images'
-
 export const SYMBOLS = [
-  { id: 'BTC',  stream: 'btcusdt',  label: 'Bitcoin',        color: '#f7931a', logo: `${IC}/btc.png`  },
-  { id: 'ETH',  stream: 'ethusdt',  label: 'Ethereum',       color: '#627eea', logo: `${IC}/eth.png`  },
-  { id: 'BNB',  stream: 'bnbusdt',  label: 'BNB',            color: '#f3ba2f', logo: `${IC}/bnb.png`  },
-  { id: 'SOL',  stream: 'solusdt',  label: 'Solana',         color: '#9945ff', logo: `${IC}/sol.png`  },
-  { id: 'XRP',  stream: 'xrpusdt',  label: 'Ripple',         color: '#346aa9', logo: `${IC}/xrp.png`  },
-  { id: 'DOGE', stream: 'dogeusdt', label: 'Dogecoin',       color: '#c2a633', logo: `${IC}/doge.png` },
-  { id: 'ADA',  stream: 'adausdt',  label: 'Cardano',        color: '#0033ad', logo: `${IC}/ada.png`  },
-  { id: 'AVAX', stream: 'avaxusdt', label: 'Avalanche',      color: '#e84142', logo: `${IC}/avax.png` },
-  { id: 'TRX',  stream: 'trxusdt',  label: 'TRON',           color: '#ef0027', logo: `${IC}/trx.png`  },
-  { id: 'LINK', stream: 'linkusdt', label: 'Chainlink',      color: '#2a5ada', logo: `${IC}/link.png` },
-  { id: 'DOT',  stream: 'dotusdt',  label: 'Polkadot',       color: '#e6007a', logo: `${IC}/dot.png`  },
-  { id: 'TON',  stream: 'tonusdt',  label: 'Toncoin',        color: '#0088cc', logo: `${CG}/17980/small/ton_symbol.png`             },
-  { id: 'MATIC',stream: 'maticusdt',label: 'Polygon',        color: '#8247e5', logo: `${IC}/matic.png`},
-  { id: 'LTC',  stream: 'ltcusdt',  label: 'Litecoin',       color: '#bfbbbb', logo: `${IC}/ltc.png`  },
-  { id: 'NEAR', stream: 'nearusdt', label: 'NEAR Protocol',  color: '#00c08b', logo: `${IC}/near.png` },
-  { id: 'UNI',  stream: 'uniusdt',  label: 'Uniswap',        color: '#ff007a', logo: `${IC}/uni.png`  },
-  { id: 'APT',  stream: 'aptusdt',  label: 'Aptos',          color: '#2ecc71', logo: `${CG}/26455/small/aptos_round.png`            },
-  { id: 'SUI',  stream: 'suiusdt',  label: 'Sui',            color: '#4da2ff', logo: `${CG}/26375/small/sui_asset.jpeg`             },
-  { id: 'OP',   stream: 'opusdt',   label: 'Optimism',       color: '#ff0420', logo: `${CG}/25244/small/Optimism.png`               },
-  { id: 'ARB',  stream: 'arbusdt',  label: 'Arbitrum',       color: '#12aaff', logo: `${CG}/16547/small/photo_2023-03-29_21.47.00.jpeg` },
+  { id: 'BTC',  stream: 'btcusdt',  label: 'Bitcoin',       color: '#f7931a', cgId: 'bitcoin'          },
+  { id: 'ETH',  stream: 'ethusdt',  label: 'Ethereum',      color: '#627eea', cgId: 'ethereum'         },
+  { id: 'BNB',  stream: 'bnbusdt',  label: 'BNB',           color: '#f3ba2f', cgId: 'binancecoin'      },
+  { id: 'SOL',  stream: 'solusdt',  label: 'Solana',        color: '#9945ff', cgId: 'solana'           },
+  { id: 'XRP',  stream: 'xrpusdt',  label: 'Ripple',        color: '#346aa9', cgId: 'ripple'           },
+  { id: 'DOGE', stream: 'dogeusdt', label: 'Dogecoin',      color: '#c2a633', cgId: 'dogecoin'         },
+  { id: 'ADA',  stream: 'adausdt',  label: 'Cardano',       color: '#0033ad', cgId: 'cardano'          },
+  { id: 'AVAX', stream: 'avaxusdt', label: 'Avalanche',     color: '#e84142', cgId: 'avalanche-2'      },
+  { id: 'TRX',  stream: 'trxusdt',  label: 'TRON',          color: '#ef0027', cgId: 'tron'             },
+  { id: 'LINK', stream: 'linkusdt', label: 'Chainlink',     color: '#2a5ada', cgId: 'chainlink'        },
+  { id: 'DOT',  stream: 'dotusdt',  label: 'Polkadot',      color: '#e6007a', cgId: 'polkadot'         },
+  { id: 'TON',  stream: 'tonusdt',  label: 'Toncoin',       color: '#0088cc', cgId: 'the-open-network' },
+  { id: 'MATIC',stream: 'maticusdt',label: 'Polygon',       color: '#8247e5', cgId: 'matic-network'    },
+  { id: 'LTC',  stream: 'ltcusdt',  label: 'Litecoin',      color: '#bfbbbb', cgId: 'litecoin'         },
+  { id: 'NEAR', stream: 'nearusdt', label: 'NEAR Protocol', color: '#00c08b', cgId: 'near'             },
+  { id: 'UNI',  stream: 'uniusdt',  label: 'Uniswap',       color: '#ff007a', cgId: 'uniswap'          },
+  { id: 'APT',  stream: 'aptusdt',  label: 'Aptos',         color: '#2ecc71', cgId: 'aptos'            },
+  { id: 'SUI',  stream: 'suiusdt',  label: 'Sui',           color: '#4da2ff', cgId: 'sui'              },
+  { id: 'OP',   stream: 'opusdt',   label: 'Optimism',      color: '#ff0420', cgId: 'optimism'         },
+  { id: 'ARB',  stream: 'arbusdt',  label: 'Arbitrum',      color: '#12aaff', cgId: 'arbitrum'         },
 ]
 export const TIMEFRAMES = ['1m', '5m', '15m']
 
@@ -56,6 +53,7 @@ function buildInitialState() {
   for (const sym of SYMBOLS) {
     coins[sym.id] = {
       id: sym.id, label: sym.label, color: sym.color, stream: sym.stream,
+      logo: null,
       price: null,
       closes:     emptyTFArr(),
       rsi:        emptyTF(),
@@ -125,6 +123,16 @@ function applyKlineUpdate(coin, tf, close, isFinal) {
 
 function reducer(state, action) {
   switch (action.type) {
+    case 'LOAD_LOGOS': {
+      // action.logos = { coinId: imageUrl, ... }
+      const updatedCoins = { ...state.coins }
+      for (const [coinId, logoUrl] of Object.entries(action.logos)) {
+        if (updatedCoins[coinId]) {
+          updatedCoins[coinId] = { ...updatedCoins[coinId], logo: logoUrl }
+        }
+      }
+      return { ...state, coins: updatedCoins }
+    }
     case 'KLINE_UPDATE': {
       const { coinId, tf, close, isFinal } = action
       const coin = state.coins[coinId]
@@ -170,6 +178,22 @@ async function fetchKlines(symbol, interval, limit = MAX_CANDLES) {
   return (await res.json()).map((k) => parseFloat(k[4]))
 }
 
+async function fetchLogos() {
+  const ids = SYMBOLS.map((s) => s.cgId).join(',')
+  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&per_page=50&sparkline=false`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`CoinGecko HTTP ${res.status}`)
+  const data = await res.json()
+  // Mapea cgId → coinId → imageUrl
+  const cgIdToSymbol = Object.fromEntries(SYMBOLS.map((s) => [s.cgId, s.id]))
+  const logos = {}
+  for (const item of data) {
+    const coinId = cgIdToSymbol[item.id]
+    if (coinId && item.image) logos[coinId] = item.image
+  }
+  return logos
+}
+
 export function useCryptoRSI() {
   const [state, dispatch]   = useReducer(reducer, null, buildInitialState)
   const [connStatus, setConnStatus] = useState('connecting')
@@ -178,6 +202,13 @@ export function useCryptoRSI() {
   const alertCooldowns   = useRef({})
   // Para detección de cruces: guardamos el último { rsi, sma } por coin+tf
   const prevRsiSma       = useRef({})
+
+  // ── Logos desde CoinGecko ──────────────────────────────────
+  useEffect(() => {
+    fetchLogos()
+      .then((logos) => dispatch({ type: 'LOAD_LOGOS', logos }))
+      .catch((err) => console.warn('[Logos]', err))
+  }, [])
 
   // ── Pre-carga histórica ────────────────────────────────────
   useEffect(() => {
