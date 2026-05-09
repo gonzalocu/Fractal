@@ -2,10 +2,26 @@ import { useEffect, useRef, useReducer, useCallback, useState } from 'react'
 import { calculateRSI, getRSIZone, detectFractality } from '../utils/rsi'
 
 export const SYMBOLS = [
-  { id: 'BTC', stream: 'btcusdt', label: 'Bitcoin',  color: '#f7931a' },
-  { id: 'ETH', stream: 'ethusdt', label: 'Ethereum', color: '#627eea' },
-  { id: 'SOL', stream: 'solusdt', label: 'Solana',   color: '#9945ff' },
-  { id: 'XRP', stream: 'xrpusdt', label: 'Ripple',   color: '#346aa9' },
+  { id: 'BTC',  stream: 'btcusdt',  label: 'Bitcoin',        color: '#f7931a' },
+  { id: 'ETH',  stream: 'ethusdt',  label: 'Ethereum',       color: '#627eea' },
+  { id: 'BNB',  stream: 'bnbusdt',  label: 'BNB',            color: '#f3ba2f' },
+  { id: 'SOL',  stream: 'solusdt',  label: 'Solana',         color: '#9945ff' },
+  { id: 'XRP',  stream: 'xrpusdt',  label: 'Ripple',         color: '#346aa9' },
+  { id: 'DOGE', stream: 'dogeusdt', label: 'Dogecoin',       color: '#c2a633' },
+  { id: 'ADA',  stream: 'adausdt',  label: 'Cardano',        color: '#0033ad' },
+  { id: 'AVAX', stream: 'avaxusdt', label: 'Avalanche',      color: '#e84142' },
+  { id: 'TRX',  stream: 'trxusdt',  label: 'TRON',           color: '#ef0027' },
+  { id: 'LINK', stream: 'linkusdt', label: 'Chainlink',      color: '#2a5ada' },
+  { id: 'DOT',  stream: 'dotusdt',  label: 'Polkadot',       color: '#e6007a' },
+  { id: 'TON',  stream: 'tonusdt',  label: 'Toncoin',        color: '#0088cc' },
+  { id: 'MATIC',stream: 'maticusdt',label: 'Polygon',        color: '#8247e5' },
+  { id: 'LTC',  stream: 'ltcusdt',  label: 'Litecoin',       color: '#bfbbbb' },
+  { id: 'NEAR', stream: 'nearusdt', label: 'NEAR Protocol',  color: '#00c08b' },
+  { id: 'UNI',  stream: 'uniusdt',  label: 'Uniswap',        color: '#ff007a' },
+  { id: 'APT',  stream: 'aptusdt',  label: 'Aptos',          color: '#2ecc71' },
+  { id: 'SUI',  stream: 'suiusdt',  label: 'Sui',            color: '#4da2ff' },
+  { id: 'OP',   stream: 'opusdt',   label: 'Optimism',       color: '#ff0420' },
+  { id: 'ARB',  stream: 'arbusdt',  label: 'Arbitrum',       color: '#12aaff' },
 ]
 export const TIMEFRAMES = ['1m', '5m', '15m']
 

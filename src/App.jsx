@@ -23,7 +23,7 @@ export default function App() {
             <span className="app-header__logo">◈</span>
             <div>
               <h1 className="app-header__title">Crypto RSI Alerts</h1>
-              <p className="app-header__sub">Bitcoin · Ethereum · Solana · Ripple</p>
+              <p className="app-header__sub">Top 20 criptomonedas · RSI en tiempo real</p>
             </div>
           </div>
 
