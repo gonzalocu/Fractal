@@ -10,7 +10,7 @@ COPY . .
 RUN npm run build
 
 # ── Etapa 2: servidor ─────────────────────────────────────────
-FROM nginx:1.27-alpine
+FROM nginx:alpine
 
 # Configuración de nginx para SPA (rutas devuelven index.html)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
