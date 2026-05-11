@@ -264,25 +264,51 @@ body { min-height: 100vh; background: var(--bg); }
 .crypto-card__gauges {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.75rem;
 }
 
-.rsi-gauge { display: flex; flex-direction: column; gap: 3px; }
+.rsi-gauge { display: flex; flex-direction: column; gap: 4px; }
 
 .rsi-gauge__header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
-.rsi-gauge__vals {
+.rsi-gauge__tf {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rsi-gauge__zone-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+/* Fila de barra (RSI o SMA) */
+.rsi-gauge__bar-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.4rem;
 }
-.rsi-gauge__sma {
-  font-size: 0.62rem;
-  color: #e2e8f088;
+.rsi-gauge__bar-tag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  width: 24px;
+  flex-shrink: 0;
+}
+.rsi-gauge__bar-wrap { flex: 1; }
+.rsi-gauge__bar-val {
+  font-size: 0.72rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
 }
 .rsi-gauge__tf {
   font-size: 0.65rem;
@@ -291,12 +317,7 @@ body { min-height: 100vh; background: var(--bg); }
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.rsi-gauge__value {
-  font-size: 0.85rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  transition: color 0.3s;
-}
+/* .rsi-gauge__value removed — value now in .rsi-gauge__bar-val */
 
 .rsi-gauge__bar-bg {
   position: relative;
