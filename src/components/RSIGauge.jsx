@@ -1,5 +1,6 @@
 const OVERBOUGHT = 70
 const OVERSOLD   = 30
+const SMA_COLOR  = '#94a3b8'
 
 function getGaugeColor(rsi) {
   if (rsi === null) return '#4b5563'
@@ -8,11 +9,35 @@ function getGaugeColor(rsi) {
   return '#6366f1'
 }
 
+function getSMAColor(sma) {
+  if (sma === null) return '#4b5563'
+  if (sma >= OVERBOUGHT) return '#fca5a5'
+  if (sma <= OVERSOLD)   return '#86efac'
+  return SMA_COLOR
+}
+
+function Bar({ pct, color, markerPct, markerColor, label, subLabel, subPct }) {
+  return (
+    <div className="rsi-gauge__bar-row">
+      <span className="rsi-gauge__bar-tag">{label}</span>
+      <div className="rsi-gauge__bar-wrap">
+        <div className="rsi-gauge__bar-bg">
+          <div className="rsi-gauge__zone-marker" style={{ left: `${OVERSOLD}%`,   background: '#22c55e33' }} />
+          <div className="rsi-gauge__zone-marker" style={{ left: `${OVERBOUGHT}%`, background: '#ef444433' }} />
+          <div className="rsi-gauge__bar-fill"    style={{ width: `${pct}%`,       background: color }} />
+          <div className="rsi-gauge__needle"      style={{ left: `${pct}%`,        borderColor: color }} />
+        </div>
+      </div>
+      <span className="rsi-gauge__bar-val" style={{ color }}>{subLabel}</span>
+    </div>
+  )
+}
+
 export default function RSIGauge({ rsi, sma, zone, tf }) {
-  const value = rsi ?? 50
-  const pct   = Math.min(100, Math.max(0, value))
-  const smaPct = sma !== null ? Math.min(100, Math.max(0, sma)) : null
-  const color = getGaugeColor(rsi)
+  const rsiPct  = Math.min(100, Math.max(0, rsi ?? 50))
+  const smaPct  = Math.min(100, Math.max(0, sma ?? 50))
+  const rsiColor = getGaugeColor(rsi)
+  const smaColor = getSMAColor(sma)
 
   const zoneLabel =
     zone === 'overbought' ? 'Sobrecompra' :
@@ -23,34 +48,21 @@ export default function RSIGauge({ rsi, sma, zone, tf }) {
     <div className="rsi-gauge">
       <div className="rsi-gauge__header">
         <span className="rsi-gauge__tf">{tf}</span>
-        <div className="rsi-gauge__vals">
-          <span className="rsi-gauge__value" style={{ color }}>
-            {rsi !== null ? rsi.toFixed(1) : '—'}
-          </span>
-          {sma !== null && (
-            <span className="rsi-gauge__sma">
-              SMA {sma.toFixed(1)}
-            </span>
-          )}
-        </div>
+        <span className="rsi-gauge__zone-label">{zoneLabel}</span>
       </div>
 
-      <div className="rsi-gauge__bar-bg">
-        <div className="rsi-gauge__zone-marker" style={{ left: `${OVERSOLD}%`,   background: '#22c55e33' }} />
-        <div className="rsi-gauge__zone-marker" style={{ left: `${OVERBOUGHT}%`, background: '#ef444433' }} />
-        <div className="rsi-gauge__bar-fill"    style={{ width: `${pct}%`,       background: color }} />
-        <div className="rsi-gauge__needle"      style={{ left: `${pct}%`,        borderColor: color }} />
-        {/* Marcador SMA */}
-        {smaPct !== null && (
-          <div className="rsi-gauge__sma-marker" style={{ left: `${smaPct}%` }} />
-        )}
-      </div>
-
-      <div className="rsi-gauge__labels">
-        <span style={{ color: '#22c55e', fontSize: '0.6rem' }}>0</span>
-        <span style={{ color: '#9ca3af', fontSize: '0.65rem' }}>{zoneLabel}</span>
-        <span style={{ color: '#ef4444', fontSize: '0.6rem' }}>100</span>
-      </div>
+      <Bar
+        pct={rsiPct}
+        color={rsiColor}
+        label="RSI"
+        subLabel={rsi !== null ? rsi.toFixed(1) : '—'}
+      />
+      <Bar
+        pct={smaPct}
+        color={smaColor}
+        label="SMA"
+        subLabel={sma !== null ? sma.toFixed(1) : '—'}
+      />
     </div>
   )
 }
